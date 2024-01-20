@@ -1,0 +1,38 @@
+app:
+  jwtSecret: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
+  jwt-expiration-milliseconds: 86400000
+  openapi:
+    dev-url: http://localhost:8080
+    prod-url: https://senbank.herokuapp.com
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/senbank
+    username: root
+    password:
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days
+        token-prefix: Bearer
+
+
+server:
+  port: 8080
