@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Random;
 
 @Service
@@ -37,7 +38,7 @@ public class TypeDeCompteServiceImpl implements TypeDeCompteService {
         typeDeCompte.setDeleted(false);
 
         // on met la date de creation
-        typeDeCompte.setDateCreation(Instant.now());
+        typeDeCompte.setDateCreation(LocalDate.now());
 
         return typeDeCompteRepository.save(typeDeCompte);
     }
@@ -46,7 +47,7 @@ public class TypeDeCompteServiceImpl implements TypeDeCompteService {
     public TypeDeCompte update(TypeDeCompte typeDeCompte) {
 
         // on recupere le type de compte
-        TypeDeCompte typeDeCompteExiste = findByNom(typeDeCompte.getNom());
+        TypeDeCompte typeDeCompteExiste = typeDeCompteRepository.findById(typeDeCompte.getId()).orElseThrow();
 
         // om met a jour le type de compte
         typeDeCompteExiste.setNom(typeDeCompte.getNom());
@@ -59,7 +60,7 @@ public class TypeDeCompteServiceImpl implements TypeDeCompteService {
 
     @Override
     public TypeDeCompte findByNom(String nom) {
-        return typeDeCompteRepository.findOneByNom(nom).orElseThrow();
+        return typeDeCompteRepository.findOneByNom(nom).orElse(null);
     }
 
     @Override
@@ -82,10 +83,20 @@ public class TypeDeCompteServiceImpl implements TypeDeCompteService {
     }
 
     @Override
-    public Page<TypeDeCompte> findAll(Pageable pageable) {
-        // on recupere tous les types de compte non supprime
-        return typeDeCompteRepository.findAllByDeletedIsFalse(pageable);
+    public Page<TypeDeCompte> findAllTypeDeCompte(Pageable pageable) {
+        log.debug("Request to get all TypeDeCompte");
+        return typeDeCompteRepository.findAll(pageable);
     }
+
+    public Page<TypeDeCompte> findAll(Pageable pageable) {
+        return null;
+    }
+
+//    @Override
+//    public Page<TypeDeCompte> findAll(Pageable pageable) {
+//        // on recupere tous les types de compte non supprime
+//        return typeDeCompteRepository.findAllByDeletedIsFalse(pageable);
+//    }
 
     private String generateNumeroCompte(String prefixe){
         String numero = prefixe;

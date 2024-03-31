@@ -29,6 +29,10 @@ public class CompteDto {
 
     private Long typeDeCompteId;
 
+    private Long idCompte;
+
+    private Double montant;
+
     private User user;
 
     private TypeDeCompte typeDeCompte;

@@ -17,5 +17,4 @@ public interface TypeDeCompteRepository extends JpaRepository<TypeDeCompte, Long
 
     TypeDeCompte findByNom(String nom);
 
-    Page<TypeDeCompte> findAllByDeletedIsFalse(Pageable pageable);
 }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -55,9 +56,8 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionDto.toEntity();
         transaction.setCompteEmetteur(compteEmetteur);
         transaction.setCompteBeneficiaire(compteRecepteur);
-        transaction.setDateTransaction(Instant.now());
+        transaction.setDateTransaction(LocalDate.now());
         transaction.setDateCreation(Instant.now());
-        transaction.setDeleted(false);
         transaction.setEtatTransaction(EtatTransaction.ACCEPTEE);
 
         // on sauvegarde la transaction
@@ -82,9 +82,6 @@ public class TransactionServiceImpl implements TransactionService {
 
         // on verifie si la transaction existe
         Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new RuntimeException("La transaction n'existe pas"));
-
-        // on met a jour la transaction
-        transaction.setDeleted(true);
 
         // on sauvegarde la transaction
         transactionRepository.save(transaction);
@@ -114,8 +111,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Page<TransactionDto> getAllTransaction(Pageable pageable) {
-        return transactionRepository.findAllByDeletedFalse(pageable).map(TransactionDto::new);
+    public Page<Transaction> getAllTransaction(Pageable pageable) {
+        return transactionRepository.findAll(pageable);
     }
 
 }

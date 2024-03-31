@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Setter
@@ -31,8 +32,7 @@ public class Compte {
 
         private double decovertAutorise;
 
-        @OneToOne
-        @JoinColumn(unique = true)
+        @ManyToOne
         private TypeDeCompte typeDeCompte;
 
         @ManyToOne
@@ -50,4 +50,6 @@ public class Compte {
         private EtatCompte etatCompte;
 
         private boolean isDeleted;
+
+        private LocalDate dateCreated;
 }

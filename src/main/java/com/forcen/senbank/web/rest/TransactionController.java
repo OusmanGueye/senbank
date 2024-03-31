@@ -1,5 +1,6 @@
 package com.forcen.senbank.web.rest;
 
+import com.forcen.senbank.domain.Transaction;
 import com.forcen.senbank.service.TransactionService;
 import com.forcen.senbank.service.dto.TransactionDto;
 import com.forcen.senbank.service.impl.TransactionServiceImpl;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/transaction")
+@RequestMapping("/api/transactions")
 public class TransactionController {
 
     private final Logger log = LoggerFactory.getLogger(TransactionController.class);
@@ -45,10 +46,10 @@ public class TransactionController {
      *   @return TransactionDto
      *    @see TransactionServiceImpl#getAllTransaction(Pageable)
      **/
-    @GetMapping("/all")
-    public ResponseEntity<List<TransactionDto>> getAllTransaction(@ParameterObject Pageable pageable){
+    @GetMapping
+    public ResponseEntity<List<Transaction>> getAllTransaction(@ParameterObject Pageable pageable){
         log.debug("REST request to get all Transaction");
-        Page<TransactionDto> transactionPage = transactionService.getAllTransaction(pageable);
+        Page<Transaction> transactionPage = transactionService.getAllTransaction(pageable);
         return ResponseEntity.ok().body(transactionPage.getContent());
     }
 

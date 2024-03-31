@@ -58,5 +58,5 @@ public interface TypeDeCompteService {
      * @return Page<TypeDeCompte>
      * @see com.forcen.senbank.service.impl.TypeDeCompteServiceImpl#findAll(Pageable)
      **/
-    Page<TypeDeCompte> findAll(Pageable pageable);
+    Page<TypeDeCompte> findAllTypeDeCompte(Pageable pageable);
 }

@@ -5,6 +5,8 @@ import com.forcen.senbank.service.dto.CompteDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface CompteService {
 
     /**
@@ -60,7 +62,7 @@ public interface CompteService {
      * @return Page<CompteDto>
      * @see com.forcen.senbank.service.impl.CompteServiceImpl#getAllCompte(Pageable)
      **/
-    Page<CompteDto> getAllCompte(Pageable pageable);
+    Page<Compte> getAllCompte(Pageable pageable);
 
     /**
      * Methode pour recuperer toutes les comptes
@@ -69,4 +71,8 @@ public interface CompteService {
      * @see com.forcen.senbank.service.impl.CompteServiceImpl#getAllCompte(Pageable)
      **/
     Compte changeEtatCompte(Long idCompte, String etatCompte);
+
+    List<Compte> getAllCompteByUserId(String username);
+
+    void virement(CompteDto compteDto);
 }

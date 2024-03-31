@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Setter
@@ -25,6 +26,8 @@ public class User {
     @Column(nullable = false)
     private String password;
     private boolean enabled;
+    private LocalDate dateCreated;
+
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles",

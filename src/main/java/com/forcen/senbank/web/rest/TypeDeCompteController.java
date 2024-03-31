@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/type-de-compte")
+@RequestMapping("/api/type-comptes")
 public class TypeDeCompteController {
 
     private final Logger log = LoggerFactory.getLogger(TypeDeCompteController.class);
@@ -32,7 +32,7 @@ public class TypeDeCompteController {
      *   @return TypeDeCompte
      *    @see TypeDeCompteServiceImpl#save(TypeDeCompte)
      **/
-    @PostMapping("/create-type-de-compte")
+    @PostMapping
     public ResponseEntity<TypeDeCompte> createTypeDeCompte(@RequestBody TypeDeCompteDto typeDeCompteDto){
         log.debug("REST request to save TypeDeCompte : {}", typeDeCompteDto);
         return ResponseEntity.ok().body(typeDeCompteService.save(typeDeCompteDto.toEntity()));
@@ -44,10 +44,10 @@ public class TypeDeCompteController {
      *   @return List<TypeDeCompte>
      *       @see TypeDeCompteServiceImpl#findAll(Pageable)
     **/
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<TypeDeCompte>> getAllTypeDeCompte(@ParameterObject Pageable pageable){
         log.debug("REST request to get all TypeDeCompte");
-        Page<TypeDeCompte> typeDeComptePage = typeDeCompteService.findAll(pageable);
+        Page<TypeDeCompte> typeDeComptePage = typeDeCompteService.findAllTypeDeCompte(pageable);
         return ResponseEntity.ok().body(typeDeComptePage.getContent());
     }
 
@@ -69,7 +69,7 @@ public class TypeDeCompteController {
      *   @return TypeDeCompte
      *       @see TypeDeCompteServiceImpl#update(TypeDeCompte)
     **/
-    @PutMapping("/update-type-de-compte")
+    @PutMapping
     public ResponseEntity<TypeDeCompte> updateTypeDeCompte(@RequestBody TypeDeCompteDto typeDeCompteDto){
         log.debug("REST request to update TypeDeCompte : {}", typeDeCompteDto);
         return ResponseEntity.ok().body(typeDeCompteService.update(typeDeCompteDto.toEntity()));

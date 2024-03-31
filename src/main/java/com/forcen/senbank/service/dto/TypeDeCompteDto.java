@@ -24,6 +24,8 @@ public class TypeDeCompteDto {
 
     private double fraisOuverture;
 
+    private String prefixe;
+
 
     public TypeDeCompte toEntity() {
         TypeDeCompte typeDeCompte = new TypeDeCompte();
@@ -33,6 +35,7 @@ public class TypeDeCompteDto {
         typeDeCompte.setTauxInteret(this.tauxInteret);
         typeDeCompte.setFraisTransaction(this.fraisTransaction);
         typeDeCompte.setFraisOuverture(this.fraisOuverture);
+        typeDeCompte.setPrefixe(this.prefixe);
         return typeDeCompte;
     }
 }

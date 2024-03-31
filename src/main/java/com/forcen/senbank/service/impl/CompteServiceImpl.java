@@ -1,22 +1,31 @@
 package com.forcen.senbank.service.impl;
 
 import com.forcen.senbank.domain.Compte;
+import com.forcen.senbank.domain.Transaction;
 import com.forcen.senbank.domain.TypeDeCompte;
 import com.forcen.senbank.domain.User;
 import com.forcen.senbank.domain.enumeration.EtatCompte;
+import com.forcen.senbank.domain.enumeration.EtatTransaction;
 import com.forcen.senbank.repository.CompteRepository;
+import com.forcen.senbank.repository.TransactionRepository;
 import com.forcen.senbank.repository.TypeDeCompteRepository;
 import com.forcen.senbank.repository.UserRepository;
 import com.forcen.senbank.service.CompteService;
 import com.forcen.senbank.service.dto.CompteDto;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class CompteServiceImpl implements CompteService {
 
@@ -28,10 +37,13 @@ public class CompteServiceImpl implements CompteService {
 
     private final TypeDeCompteRepository typeDeCompteRepository;
 
-    public CompteServiceImpl(CompteRepository compteRepository, UserRepository userRepository, TypeDeCompteRepository typeDeCompteRepository) {
+    private final TransactionRepository transactionRepository;
+
+    public CompteServiceImpl(CompteRepository compteRepository, UserRepository userRepository, TypeDeCompteRepository typeDeCompteRepository, TransactionRepository transactionRepository) {
         this.compteRepository = compteRepository;
         this.userRepository = userRepository;
         this.typeDeCompteRepository = typeDeCompteRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     @Override
@@ -56,6 +68,7 @@ public class CompteServiceImpl implements CompteService {
 
         // on met statut du compte a actif
         compte.setEtatCompte(EtatCompte.ACTIF);
+        compte.setDateCreated(LocalDate.now());
 
         return compteRepository.save(compte);
     }
@@ -90,8 +103,9 @@ public class CompteServiceImpl implements CompteService {
     }
 
     @Override
-    public Page<CompteDto> getAllCompte(Pageable pageable) {
-        return compteRepository.findAll(pageable).map(CompteDto::new);
+    public Page<Compte> getAllCompte(Pageable pageable) {
+        log.debug("REST request to get all Comptes");
+        return compteRepository.findAll(pageable);
     }
 
     @Override
@@ -102,14 +116,46 @@ public class CompteServiceImpl implements CompteService {
         }).orElseThrow();
     }
 
+    @Override
+    public List<Compte> getAllCompteByUserId(String username) {
+        log.debug("REST request to get all Comptes by user : {}", username);
+        User user = userRepository.findByUsername(username).orElseThrow();
+        return compteRepository.findAllByUserId(user.getId()).stream().peek(compte -> {
+            TypeDeCompte typeDeCompte = typeDeCompteRepository.findById(compte.getTypeDeCompte().getId()).orElseThrow();
+            compte.setTypeDeCompte(typeDeCompte);
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void virement(CompteDto compteDto) {
+        log.debug("REST request to make a virement : {}", compteDto);
+        Compte compteEmetteur = compteRepository.findById(compteDto.getIdCompte()).orElseThrow();
+        Compte compteRecepteur = compteRepository.findByNumero(compteDto.getNumeroCompte()).orElseThrow();
+
+        // on debite le compte emetteur
+        compteEmetteur.setSolde(compteEmetteur.getSolde() - compteDto.getMontant());
+        compteRepository.save(compteEmetteur);
+
+        // on credite le compte recepteur
+        compteRecepteur.setSolde(compteRecepteur.getSolde() + compteDto.getMontant());
+        compteRepository.save(compteRecepteur);
+
+        // on enregistre la transaction
+        Transaction transaction = new Transaction();
+        transaction.setMontant(compteDto.getMontant());
+        transaction.setCompteEmetteur(compteEmetteur);
+        transaction.setCompteBeneficiaire(compteRecepteur);
+        transaction.setDateTransaction(LocalDate.now());
+        transaction.setEtatTransaction(EtatTransaction.TERMINEE);
+        transaction.setNumero(UUID.randomUUID().toString().substring(0, 8));
+
+
+        // on sauvegarde la transaction
+        transactionRepository.save(transaction);
+    }
+
 
     private String generateNumeroCompte(String prefixe) {
-        StringBuilder numeroCompte = new StringBuilder();
-        numeroCompte.append(prefixe);
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            numeroCompte.append(random.nextInt(10));
-        }
-        return "SN-" + numeroCompte;
+        return "SN-" + prefixe + "-" + UUID.randomUUID().toString().substring(0, 8);
     }
 }

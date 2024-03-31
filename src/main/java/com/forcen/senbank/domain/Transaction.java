@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -29,14 +30,13 @@ public class Transaction {
     private double montant;
 
     @Column(nullable = false)
-    private Instant dateTransaction;
+    private LocalDate dateTransaction;
 
-    @Column(nullable = false)
-    private boolean isDeleted;
 
     private Instant dateCreation;
 
     private String motif;
+
 
     @ManyToOne
     @JoinColumn(name = "compte_emetteur_id", nullable = false)

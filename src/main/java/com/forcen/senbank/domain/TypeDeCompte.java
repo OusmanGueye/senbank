@@ -1,12 +1,10 @@
 package com.forcen.senbank.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Setter
 @Getter
@@ -14,8 +12,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @Entity
 @Table(name = "type_de_compte")
+@ToString
 public class TypeDeCompte {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +24,7 @@ public class TypeDeCompte {
     @Column(nullable = false, unique = true)
     private String nom;
 
-    private Instant dateCreation;
+    private LocalDate dateCreation;
 
     private double tauxInteret;
 
@@ -36,6 +34,7 @@ public class TypeDeCompte {
 
     private String prefixe;
 
+    @Column(name = "deleted")
     private boolean isDeleted;
 
 }

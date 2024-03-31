@@ -2,9 +2,11 @@ package com.forcen.senbank.web.rest;
 
 
 import com.forcen.senbank.domain.Compte;
+import com.forcen.senbank.domain.User;
 import com.forcen.senbank.service.CompteService;
 import com.forcen.senbank.service.dto.CompteDto;
 import com.forcen.senbank.service.impl.CompteServiceImpl;
+import com.forcen.senbank.web.util.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.annotations.ParameterObject;
@@ -18,7 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/compte")
+@RequestMapping("/api/comptes")
 public class CompteController {
 
     private final Logger log = LoggerFactory.getLogger(CompteController.class);
@@ -35,7 +37,7 @@ public class CompteController {
      *   @return Compte
      *    @see CompteServiceImpl#createCompte(CompteDto)
     **/
-    @PostMapping("/create-compte")
+    @PostMapping
     public ResponseEntity<Compte> createCompte(@RequestBody CompteDto compteDto){
         log.debug("REST request to save Compte : {}", compteDto);
         return ResponseEntity.ok().body(compteService.createCompte(compteDto));
@@ -47,11 +49,12 @@ public class CompteController {
      *   @return List<CompteDto>
      *       @see CompteServiceImpl#getAllCompte(Pageable)
     **/
-    @GetMapping("/all")
-    public ResponseEntity<List<CompteDto>> getAllCompte(@ParameterObject Pageable pageable){
+    @GetMapping
+    public ResponseEntity<List<Compte>> getAllCompte(@ParameterObject Pageable pageable){
         log.debug("REST request to get all Compte");
-        Page<CompteDto> compteDtoPage = compteService.getAllCompte(pageable);
-        return ResponseEntity.ok().body(compteDtoPage.getContent());
+        Page<Compte> page = compteService.getAllCompte(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -84,7 +87,7 @@ public class CompteController {
      *   @return CompteDto
      *       @see CompteServiceImpl#updateCompte(CompteDto)
     **/
-    @PutMapping("/update-compte")
+    @PutMapping
     public ResponseEntity<CompteDto> updateCompte(@RequestBody CompteDto compteDto){
         log.debug("REST request to update Compte : {}", compteDto);
         return ResponseEntity.ok().body(compteService.updateCompte(compteDto));
@@ -128,6 +131,21 @@ public class CompteController {
         log.debug("REST request to get all Compte by user : {}", idUser);
         Page<CompteDto> compteDtoPage = compteService.getAllCompteByUser(idUser, pageable);
         return ResponseEntity.ok().body(compteDtoPage.getContent());
+    }
+
+    // user
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<Compte>> getAllCompteByUser(@PathVariable String username){
+        log.debug("REST request to get all Compte by user");
+        return ResponseEntity.ok().body(compteService.getAllCompteByUserId(username));
+    }
+
+    //virement
+    @PostMapping("/virement")
+    public ResponseEntity<Void> virement(@RequestBody CompteDto compteDto){
+        log.debug("REST request to virement : {}", compteDto);
+        compteService.virement(compteDto);
+        return ResponseEntity.ok().build();
     }
 
 }

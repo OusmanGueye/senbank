@@ -1,5 +1,6 @@
 package com.forcen.senbank.service;
 
+import com.forcen.senbank.domain.Transaction;
 import com.forcen.senbank.service.dto.TransactionDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +60,6 @@ public interface TransactionService {
      * @return Page<TransactionDto>
      * @see com.forcen.senbank.service.impl.TransactionServiceImpl#getAllTransaction(Pageable)
      **/
-    Page<TransactionDto> getAllTransaction(Pageable pageable);
+    Page<Transaction> getAllTransaction(Pageable pageable);
 
 }

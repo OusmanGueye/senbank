@@ -29,17 +29,22 @@ public class JwtTokenProvider {
     public String generateToken(Authentication authentication){
         String username = authentication.getName();
 
+        String roles = authentication.getAuthorities().stream()
+                .findFirst()
+                .map(Object::toString)
+                .orElse(null);;
+
         Date currentDate = new Date();
 
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key())
+                .claim("roles", roles)
                 .compact();
-        return token;
     }
 
     private Key key(){

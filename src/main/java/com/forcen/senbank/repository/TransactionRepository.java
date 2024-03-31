@@ -19,5 +19,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     Page<Transaction> findAllByCompteBeneficiaire(Compte compteRecepteur, Pageable pageable);
 
-    Page<Transaction> findAllByDeletedFalse(Pageable pageable);
 }
